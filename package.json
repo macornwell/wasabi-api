@@ -2,9 +2,9 @@
   "name": "wasabi-api",
   "version": "1.0.0",
   "description": "The JavaScript Wasabi Wallet API.",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,9 @@
   "bugs": {
     "url": "https://github.com/macornwell/wasabi-api/issues"
   },
-  "homepage": "https://github.com/macornwell/wasabi-api#readme"
+  "homepage": "https://github.com/macornwell/wasabi-api#readme",
+  "dependencies": {
+    "commander": "^4.1.1",
+    "node-fetch": "^2.6.0"
+  }
 }
