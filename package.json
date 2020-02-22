@@ -1,0 +1,27 @@
+{
+  "name": "wasabi-api",
+  "version": "1.0.0",
+  "description": "The JavaScript Wasabi Wallet API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macornwell/wasabi-api.git"
+  },
+  "keywords": [
+    "wasabiwallet.io",
+    "wasabi",
+    "javascript",
+    "bitcoin",
+    "wallet",
+    "api"
+  ],
+  "author": "Mike Cornwell",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/macornwell/wasabi-api/issues"
+  },
+  "homepage": "https://github.com/macornwell/wasabi-api#readme"
+}
