@@ -1,7 +1,10 @@
 # The Wasabi JavaScript API
 
-This JavaScript library creates the ability to call Wasabi Wallet RPC functions from javascript. It also includes command line utilities for calling this API from the CLI.
+This JavaScript library creates the ability to call the [RPC](https://docs.wasabiwallet.io/using-wasabi/RPC.html) functions for the [Wasabi Wallet](https://github.com/zkSNACKs/WalletWasabi/) from javascript. This repo also includes command line utilities for calling the api directly from a bash CLI.
 
+
+## Note
+This library requires a Wasabi Wallet RPC to be running. As of 02/2020, in order to have RPC functionaliity in Wasabi Wallet, one must [build](https://docs.wasabiwallet.io/using-wasabi/BuildSource.html#get-the-requirements) the latest version of Wasabi Wallet. [Issue](https://github.com/zkSNACKs/WalletWasabi/issues/3121)
 
 ## Complete Methods
 - getStatus
@@ -19,3 +22,4 @@ This JavaScript library creates the ability to call Wasabi Wallet RPC functions 
 - enqueue
 - dequeue
 - stop
+
