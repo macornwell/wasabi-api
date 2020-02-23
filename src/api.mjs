@@ -174,6 +174,10 @@ const WasabiAPI = (fetch, wasabiConfig) => {
     return _post('stop').catch(x=>x)
   }
 
+  const loadWallet = (name="Wallet0", password="") => {
+    return _post('loadwallet', [name, password]).catch(x=>x)
+  }
+
   return {
     getStatus,
     createWallet,
@@ -187,6 +191,7 @@ const WasabiAPI = (fetch, wasabiConfig) => {
     listKeys,
     enqueue,
     dequeue,
+    loadWallet,
     stop
   }
 }

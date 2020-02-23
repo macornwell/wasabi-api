@@ -12,6 +12,8 @@ This JavaScript library creates the ability to call the [RPC](https://docs.wasab
 ## Note
 This library requires a Wasabi Wallet RPC to be running. As of 02/2020, in order to have RPC functionaliity in Wasabi Wallet, one must [build](https://docs.wasabiwallet.io/using-wasabi/BuildSource.html#get-the-requirements) the latest version of Wasabi Wallet. [Issue](https://github.com/zkSNACKs/WalletWasabi/issues/3121)
 
+**Important:**If you create a new wallet, you have to close down Wasabi Wallet before you can load the wallet!
+
 ## Complete Methods
 - getStatus
 
