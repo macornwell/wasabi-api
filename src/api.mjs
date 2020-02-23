@@ -1,3 +1,5 @@
+import base64 from 'base-64'
+
 const ConsoleLogger = () => {
   return (errorMessage) => {
     if (typeof errorMessage === 'object') {
@@ -25,6 +27,8 @@ const WasabiConfig = ({
   id='1',
   host='http://127.0.0.1',
   port=37128,
+  username='',
+  password='',
   verbose=false,
   logger=(errorMessage) => {},
   kwargs={}
@@ -33,6 +37,8 @@ const WasabiConfig = ({
     jsonRpc,
     id,
     host,
+    username,
+    password,
     port,
     verbose,
     logger: (errorMessage) => {
@@ -54,6 +60,17 @@ const WasabiConfig = ({
  */
 const WasabiAPI = (fetch, wasabiConfig) => {
   const logger = wasabiConfig.logger
+
+  const _handleResponse = response => {
+    if (response.ok) {
+      return response.json()
+    } else if (response.status === 401) {
+      throw new Error('Unauthorized. Credentials needed.')
+    } else {
+      logger(response)
+      throw new Error(`Error occurred. Status: ${response.status} ${response.message}`)
+    }
+  }
 
   const _createPostBody = (method, params=[]) => {
     return !!params
@@ -79,19 +96,23 @@ const WasabiAPI = (fetch, wasabiConfig) => {
       logger(body)
       logger('Starting fetch')
     }
-
-    const result = await fetch(url, {
-      method: 'POST',
-      headers:{
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    }).then(x=>x.json())
-    if (result.error) {
-      logger('ERROR: Error discovered!')
-      logger(result.error)
-      throw new Error(`${result.error.message}: Code: ${result.error.code}`)
+    const configs = !!(wasabiConfig.password)
+      ? {Authorization: `Basic ${base64.encode(`${wasabiConfig.username}:${wasabiConfig.password}`)}`}
+      : {}
+    if (wasabiConfig.verbose) {
+      logger('Configurations')
+      logger(configs)
     }
+    const result = await fetch(url, {
+        method: 'POST',
+        headers:{
+          'content-type': 'application/json',
+          ...configs
+        },
+        body: JSON.stringify(body)
+      }).then(_handleResponse).catch(error => {
+      throw error
+    })
     return result
   }
 

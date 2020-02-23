@@ -10,8 +10,9 @@ commander
   .option('-i, --id <id>', 'Changes the id. Defaults to 1.', '1')
   .option('-o, --host <http://uri>', 'The host of the Rpc instance. Defaults to http://127.0.0.1', 'http://127.0.0.1')
   .option('-p, --port <port>', 'The port of the Rpc instance. Defaults to 37128', 37128)
+  .option('-u, --username <username>', 'The username for the RPC service.', '')
+  .option('-s, --password <password>', 'The password for the RPC service.', '')
   .option('-v, --verbose', 'Turns on verbose, for debugging.', false)
-  
 
 
 commander.parse(process.argv);
@@ -27,6 +28,8 @@ const logger = ConsoleLogger()
 const config = WasabiConfig({
   jsonRpc:commander.jsonRpc,
   id:commander.id,
+  username:commander.username,
+  password:commander.password,
   host:commander.host,
   verbose:commander.verbose,
   logger,

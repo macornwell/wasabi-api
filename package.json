@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/macornwell/wasabi-api#readme",
   "dependencies": {
+    "base-64": "^0.1.0",
     "commander": "^4.1.1",
     "node-fetch": "^2.6.0"
   }
