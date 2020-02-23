@@ -1,0 +1,3 @@
+#!/bin/bash
+bin=`dirname $0`
+node --experimental-modules $bin/wasapi.mjs "$@"

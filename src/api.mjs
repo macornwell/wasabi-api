@@ -1,3 +1,13 @@
+const ConsoleLogger = () => {
+  return (errorMessage) => {
+    if (typeof errorMessage === 'object') {
+      console.log(`${new Date().toISOString()}: ${JSON.stringify(errorMessage, null, 2)}`)
+    } else {
+      console.log(`${new Date().toISOString()}: ${errorMessage}`)
+    }
+  }
+}
+
 /**
  * A configuration for the WasabiAPI.
  *
@@ -16,6 +26,7 @@ const WasabiConfig = ({
   host='http://127.0.0.1',
   port=37128,
   verbose=false,
+  logger=(errorMessage) => {},
   kwargs={}
 }={}) => {
   return {
@@ -24,6 +35,11 @@ const WasabiConfig = ({
     host,
     port,
     verbose,
+    logger: (errorMessage) => {
+      if (logger) {
+        logger(errorMessage)
+      }
+    },
     ...kwargs
   }
 }
@@ -37,6 +53,7 @@ const WasabiConfig = ({
  * @constructor
  */
 const WasabiAPI = (fetch, wasabiConfig) => {
+  const logger = wasabiConfig.logger
 
   const _createPostBody = (method, params=[]) => {
     return !!params
@@ -53,38 +70,129 @@ const WasabiAPI = (fetch, wasabiConfig) => {
       }
   }
 
-  const _post = (method, params=[]) => {
+  const _post = async (method, params=[]) => {
     const url = `${wasabiConfig.host}:${wasabiConfig.port}`
     const body = _createPostBody(method, params)
     if (wasabiConfig.verbose) {
-      console.log(`Url :${url}`)
-      console.log(`Data:`)
-      console.log(body)
+      logger(`Url :${url}`)
+      logger(`Data:`)
+      logger(body)
+      logger('Starting fetch')
     }
 
-    return fetch(url, {
+    const result = await fetch(url, {
       method: 'POST',
       headers:{
         'content-type': 'application/json'
       },
       body: JSON.stringify(body)
-    })
+    }).then(x=>x.json())
+    if (result.error) {
+      logger('ERROR: Error discovered!')
+      logger(result.error)
+      throw new Error(`${result.error.message}: Code: ${result.error.code}`)
+    }
+    return result
   }
 
   /**
-   * Gets the status of the Wasabi Wallet RPC
-   * @returns A promise
+   * Gets the status of the Wasabi application.
+   * @returns A promise for a JSON response.
    */
-  const getStatus = () => {
+  const getStatus = async () => {
     return _post('getstatus')
+  }
+
+  const createWallet = async (walletName, password='') => {
+    return _post('createwallet', [walletName, password])
+  }
+
+  const listUnSpentCoins = () => {
+    return _post('listunspentcoins')
+  }
+
+  const getWalletInfo = kwargs => {
+    return _post('getwalletinfo', kwargs)
+  }
+
+  const getNewAddress = label => {
+    return _post('getnewaddress', [label])
+  }
+
+  const createSendPayment = (sendTo, amount, label, subtractFee=false) => {
+    return !!subtractFee
+      ? {
+        sendto: sendTo,
+        amount,
+        label,
+        subtractfee: subtractFee
+      }
+      : {
+        sendto: sendTo,
+        amount,
+        label
+      }
+  }
+
+  const createCoin = (transactionId, index) => {
+    return {
+      transactionid: transactionId,
+      index
+    }
+  }
+
+  const send = ({payments=[], coins=[], feeTarget=2, password=""}) => {
+    return _post('send', {payments, coins, feeTarget, password})
+  }
+
+  const getHistory = () => {
+    return _post('gethistory')
+  }
+
+  const listKeys = () => {
+    return _post('listkeys')
+  }
+
+  /**
+   * Enqueue coins for a coinjoin.
+   */
+  const enqueue = ({coins=[]}) => {
+    return _post('enqueue', {coins})
+  }
+
+  /**
+   *  Dequeue coins for a coinjoin.
+   */
+  const dequeue = ({coins=[]}) => {
+    return _post('dequeue', {coins})
+  }
+
+  /**
+   *  Stops and exists wasabi.
+   */
+  const stop = () => {
+    return _post('stop').catch(x=>x)
   }
 
   return {
     getStatus,
+    createWallet,
+    createCoin,
+    listUnSpentCoins,
+    getWalletInfo,
+    getNewAddress,
+    createSendPayment,
+    send,
+    getHistory,
+    listKeys,
+    enqueue,
+    dequeue,
+    stop
   }
 }
 
 export {
   WasabiAPI,
-  WasabiConfig
+  WasabiConfig,
+  ConsoleLogger,
 }
